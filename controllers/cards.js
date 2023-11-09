@@ -1,11 +1,21 @@
 const Card = require("../models/Card");
+const { BAD_REQUEST_STATUS,
+  SERVER_ERROR_STATUS,
+  NOT_FOUND_STATUS,
+  CREATED_STATUS,
+  SUCCESS_STATUS} = require("../constants/errorStatus")
 
 const getCards = async (req, res) => {
   try {
     const cards = await Card.find({});
-    return res.send(cards);
+    return res.status(CREATED_STATUS).send(cards);
   } catch (error) {
-    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+    if (error.name === "ValidationError") {
+      return res.status(BAD_REQUEST_STATUS).send({
+        message: "Переданы некорректные данные.",
+      });
+    }
+    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
   }
 };
 
@@ -14,22 +24,22 @@ const postCard = async (req, res) => {
     const newCard = await new Card(req.body);
     newCard.owner = req.user._id;
 
-    return res.status(201).send(await newCard.save());
+    return res.status(CREATED_STATUS).send(await newCard.save());
   } catch (error) {
     if (error.name === "ValidationError") {
-      return res.status(400).send({
+      return res.status(BAD_REQUEST_STATUS).send({
         message: " Переданы некорректные данные при создании карточки.",
       });
     }
-    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
   }
 };
 
 const deleteCard = async (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
-      console.log(card.owner);
-      console.log(req.user._id);
+      //console.log(card.owner);
+      //console.log(req.user._id);
       if (!card) {
         throw new Error("NotFound");
       }
@@ -38,16 +48,16 @@ const deleteCard = async (req, res) => {
       // }else {
       //   return res.status(404).send({message: "Удалить можно только свою карточку!"})
       // }
-      return res.send(card);
+      return res.status(CREATED_STATUS).send(card);
     })
     .catch((error) => {
-      console.log(error);
+      //console.log(error);
       if (error.message === "NotFound") {
         return res
-          .status(404)
+          .status(NOT_FOUND_STATUS)
           .send({ message: "Карточка с указанным _id не найдена." });
       }
-      return res.status(500).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
     });
 };
 
@@ -59,18 +69,18 @@ const likeCard = (req, res) =>
   )
     .then((like) => {
       if (!req.params.cardId) {
-        console.log(req.params.cardId);
+        //console.log(req.params.cardId);
         throw new Error("NotFound");
       }
       if (!like) {
         throw new Error("NotFoundDataLike");
       }
-      return res.send(like);
+      return res.status(CREATED_STATUS).send(like);
     })
     .catch((error) => {
       if (error.message === "NotFoundDataLike") {
         return res
-          .status(400)
+          .status(BAD_REQUEST_STATUS)
           .send({
             message:
               "Переданы некорректные данные для постановки/снятии лайка.",
@@ -78,10 +88,10 @@ const likeCard = (req, res) =>
       }
       if (error.message === "NotFound") {
         return res
-          .status(404)
+          .status(NOT_FOUND_STATUS)
           .send({ message: "Передан несуществующий _id карточки." });
       }
-      return res.status(500).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
     });
 
 const dislikeCard = (req, res) =>
@@ -92,18 +102,18 @@ const dislikeCard = (req, res) =>
   )
     .then((like) => {
       if (!req.params.cardId) {
-        console.log(req.params.cardId);
+        //console.log(req.params.cardId);
         throw new Error("NotFound");
       }
       if (!like) {
         throw new Error("NotFoundDataLike");
       }
-      return res.send(like);
+      return res.status(CREATED_STATUS).send(like);
     })
     .catch((error) => {
       if (error.message === "NotFoundDataLike") {
         return res
-          .status(400)
+          .status(BAD_REQUEST_STATUS)
           .send({
             message:
               "Переданы некорректные данные для постановки/снятии лайка.",
@@ -111,10 +121,10 @@ const dislikeCard = (req, res) =>
       }
       if (error.message === "NotFound") {
         return res
-          .status(404)
+          .status(NOT_FOUND_STATUS)
           .send({ message: "Передан несуществующий _id карточки." });
       }
-      return res.status(500).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
     });
 
 module.exports = {

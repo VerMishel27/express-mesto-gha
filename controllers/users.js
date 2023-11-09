@@ -1,12 +1,22 @@
 //import User from "../models/User";
 const User = require("../models/User");
+const { BAD_REQUEST_STATUS,
+  SERVER_ERROR_STATUS,
+  NOT_FOUND_STATUS,
+  CREATED_STATUS,
+  SUCCESS_STATUS} = require("../constants/errorStatus")
 
 const getUsers = async (req, res) => {
   try {
     const user = await User.find({});
-    return res.send(user);
+    return res.status(CREATED_STATUS).send(user);
   } catch (error) {
-    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+    if (error.name === "ValidationError") {
+      return res.status(BAD_REQUEST_STATUS).send({
+        message: "Переданы некорректные данные при создании пользователя.",
+      });
+    }
+    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
   }
 };
 
@@ -15,17 +25,17 @@ const getUserById = async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId).orFail(new Error("NotFound"));
     // if (!user) { throw new Error('NotFound')}
-    return res.send(user);
+    return res.status(CREATED_STATUS).send(user);
   } catch (error) {
     if (error.message === "NotFound") {
       return res
-        .status(404)
+        .status(NOT_FOUND_STATUS)
         .send({ message: "Пользователь с указанным _id не найден." });
     }
     if (error.name === "CastError") {
-      return res.status(400).send({ message: "передан не валидный id" });
+      return res.status(BAD_REQUEST_STATUS).send({ message: "передан не валидный id" });
     }
-    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
   }
 };
 
@@ -33,14 +43,14 @@ const createUser = async (req, res) => {
   try {
     const newUser = await new User(req.body);
 
-    return res.status(201).send(await newUser.save());
+    return res.status(CREATED_STATUS).send(await newUser.save());
   } catch (error) {
     if (error.name === "ValidationError") {
-      return res.status(400).send({
+      return res.status(BAD_REQUEST_STATUS).send({
         message: "Переданы некорректные данные при создании пользователя.",
       });
     }
-    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
   }
 };
 
@@ -58,20 +68,20 @@ const updateInfoUser = async (req, res) => {
       if (!user) {
         throw new Error("NotFound");
       }
-      return res.send({ name: user.name, about: user.about });
+      return res.status(CREATED_STATUS).send({ name: user.name, about: user.about });
     })
     .catch((error) => {
       if (error.message === "NotFound") {
         return res
-          .status(404)
+          .status(NOT_FOUND_STATUS)
           .send({ message: "Пользователь с указанным _id не найден." });
       }
       if (error.name === "ValidationError") {
-        return res.status(400).send({
+        return res.status(BAD_REQUEST_STATUS).send({
           message: "Переданы некорректные данные при обновлении профиля.",
         });
       }
-      return res.status(500).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
     });
 };
 
@@ -90,20 +100,20 @@ const updateAvatarUser = async (req, res) => {
       if (!user) {
         throw new Error("NotFound");
       }
-      return res.send({ avatar: user.avatar });
+      return res.status(CREATED_STATUS).send({ avatar: user.avatar });
     })
     .catch((error) => {
       if (error.message === "NotFound") {
         return res
-          .status(404)
+          .status(NOT_FOUND_STATUS)
           .send({ message: "Пользователь с указанным _id не найден." });
       }
       if (error.name === "ValidationError") {
-        return res.status(400).send({
+        return res.status(BAD_REQUEST_STATUS).send({
           message: "Переданы некорректные данные при обновлении профиля.",
         });
       }
-      return res.status(500).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
     });
 };
 
