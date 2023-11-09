@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: {
+      required: {
         value: true,
         message: "Поле name является обязательным",
       },
@@ -13,18 +13,18 @@ const userSchema = new mongoose.Schema(
     },
     about: {
       type: String,
-      require: {
+      required: {
         value: true,
-        message: "Поле name является обязательным",
+        message: "Поле about является обязательным",
       },
       minlength: [2, "Минимальная длинна 2 символа"],
       maxlength: [30, "Максимальная длинна 30 символов"],
     },
     avatar: {
       type: String,
-      require: {
+      required: {
         value: true,
-        message: "Поле name является обязательным",
+        message: "Поле avatar является обязательным",
       },
     },
   },

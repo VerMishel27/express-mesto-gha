@@ -6,7 +6,7 @@ const cardSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: {
+      required: {
         value: true,
         message: "Поле name является обязательным",
       },
@@ -15,7 +15,7 @@ const cardSchema = new mongoose.Schema(
     },
     link: {
       type: String,
-      require: {
+      required: {
         value: true,
         message: "Поле link является обязательным",
       },
@@ -23,7 +23,7 @@ const cardSchema = new mongoose.Schema(
     owner: {
       type: ObjectId,
       ref: "user",
-      require: true,
+      required: true,
     },
     likes: [
       {

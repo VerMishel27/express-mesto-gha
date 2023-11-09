@@ -42,8 +42,10 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const newUser = await new User(req.body);
+    console.log(newUser)
 
     return res.status(CREATED_STATUS).send(await newUser.save());
+    //return res.status(CREATED_STATUS).send({name: newUser.name, about: newUser.about});
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(BAD_REQUEST_STATUS).send({
