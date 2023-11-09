@@ -38,7 +38,7 @@ const deleteCard = async (req, res) => {
       // }else {
       //   return res.status(404).send({message: "Удалить можно только свою карточку!"})
       // }
-      res.send(card);
+      return res.send(card);
     })
     .catch((error) => {
       console.log(error);
@@ -65,7 +65,7 @@ const likeCard = (req, res) =>
       if (!like) {
         throw new Error("NotFoundDataLike");
       }
-      res.send(like);
+      return res.send(like);
     })
     .catch((error) => {
       if (error.message === "NotFoundDataLike") {
@@ -98,7 +98,7 @@ const dislikeCard = (req, res) =>
       if (!like) {
         throw new Error("NotFoundDataLike");
       }
-      res.send(like);
+      return res.send(like);
     })
     .catch((error) => {
       if (error.message === "NotFoundDataLike") {

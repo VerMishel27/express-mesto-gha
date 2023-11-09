@@ -58,7 +58,7 @@ const updateInfoUser = async (req, res) => {
       if (!user) {
         throw new Error("NotFound");
       }
-      res.send({ name: user.name, about: user.about });
+      return res.send({ name: user.name, about: user.about });
     })
     .catch((error) => {
       if (error.message === "NotFound") {
@@ -90,7 +90,7 @@ const updateAvatarUser = async (req, res) => {
       if (!user) {
         throw new Error("NotFound");
       }
-      res.send({ avatar: user.avatar });
+      return res.send({ avatar: user.avatar });
     })
     .catch((error) => {
       if (error.message === "NotFound") {
