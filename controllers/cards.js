@@ -48,7 +48,6 @@ const deleteCard = async (req, res) => {
     }
 
     const delCard = await Card.findByIdAndRemove(req.params.cardId);
-    console.log(delCard, "тутуут");
 
     if (!delCard) {
       throw new Error("NotFound");
@@ -116,7 +115,7 @@ const dislikeCard = (req, res) => {
           throw new Error("NotFound");
         }
 
-        return res.status(CREATED_STATUS).send(like);
+        return res.status(SUCCESS_STATUS).send(like);
       })
       .catch((error) => {
         if (error.message === "NotFound") {
