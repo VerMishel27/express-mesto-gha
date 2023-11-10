@@ -5,11 +5,7 @@ const mongoose = require("mongoose");
 const router = require("./routes");
 const app = express();
 const {
-  BAD_REQUEST_STATUS,
-  SERVER_ERROR_STATUS,
   NOT_FOUND_STATUS,
-  CREATED_STATUS,
-  SUCCESS_STATUS,
 } = require("./constants/errorStatus");
 
 const { PORT = 3000 } = process.env;
