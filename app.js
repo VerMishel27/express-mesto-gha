@@ -25,11 +25,11 @@ mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   useUnifiedTopology: true,
 });
 
-app.use((req, res) => {
-  res.status(404).send({message: "Страница не найдена"})
-})
-
 app.use(router);
+
+app.use((req, res) => {
+  res.status(404).send({ message: "Страница не найдена" });
+});
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
