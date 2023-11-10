@@ -9,7 +9,7 @@
     "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node --trace-warnings --inspect -- app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Bubnov Misha",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",

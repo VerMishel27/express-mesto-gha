@@ -11,11 +11,6 @@ const getUsers = async (req, res) => {
     const user = await User.find({});
     return res.status(SUCCESS_STATUS).send(user);
   } catch (error) {
-    if (error.name === "ValidationError") {
-      return res.status(BAD_REQUEST_STATUS).send({
-        message: "Переданы некорректные данные при создании пользователя.",
-      });
-    }
     return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
   }
 };
@@ -24,7 +19,7 @@ const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId).orFail(new Error("NotFound"));
-    // if (!user) { throw new Error('NotFound')}
+
     return res.status(SUCCESS_STATUS).send(user);
   } catch (error) {
     if (error.message === "NotFound") {
@@ -42,10 +37,9 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const newUser = await new User(req.body);
-    console.log(newUser)
 
     return res.status(CREATED_STATUS).send(await newUser.save());
-    //return res.status(CREATED_STATUS).send({name: newUser.name, about: newUser.about});
+
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(BAD_REQUEST_STATUS).send({
