@@ -8,7 +8,7 @@ const { BAD_REQUEST_STATUS,
 const getCards = async (req, res) => {
   try {
     const cards = await Card.find({});
-    return res.status(CREATED_STATUS).send(cards);
+    return res.status(SUCCESS_STATUS).send(cards);
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(BAD_REQUEST_STATUS).send({
@@ -48,7 +48,7 @@ const deleteCard = async (req, res) => {
       // }else {
       //   return res.status(404).send({message: "Удалить можно только свою карточку!"})
       // }
-      return res.status(CREATED_STATUS).send(card);
+      return res.status(SUCCESS_STATUS).send(card);
     })
     .catch((error) => {
       //console.log(error);
@@ -108,7 +108,7 @@ const dislikeCard = (req, res) =>
       if (!like) {
         throw new Error("NotFoundDataLike");
       }
-      return res.status(CREATED_STATUS).send(like);
+      return res.status(SUCCESS_STATUS).send(like);
     })
     .catch((error) => {
       if (error.message === "NotFoundDataLike") {

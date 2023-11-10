@@ -9,7 +9,7 @@ const { BAD_REQUEST_STATUS,
 const getUsers = async (req, res) => {
   try {
     const user = await User.find({});
-    return res.status(CREATED_STATUS).send(user);
+    return res.status(SUCCESS_STATUS).send(user);
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(BAD_REQUEST_STATUS).send({
@@ -25,7 +25,7 @@ const getUserById = async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId).orFail(new Error("NotFound"));
     // if (!user) { throw new Error('NotFound')}
-    return res.status(CREATED_STATUS).send(user);
+    return res.status(SUCCESS_STATUS).send(user);
   } catch (error) {
     if (error.message === "NotFound") {
       return res
@@ -70,7 +70,7 @@ const updateInfoUser = async (req, res) => {
       if (!user) {
         throw new Error("NotFound");
       }
-      return res.status(CREATED_STATUS).send({ name: user.name, about: user.about });
+      return res.status(SUCCESS_STATUS).send({ name: user.name, about: user.about });
     })
     .catch((error) => {
       if (error.message === "NotFound") {
@@ -102,7 +102,7 @@ const updateAvatarUser = async (req, res) => {
       if (!user) {
         throw new Error("NotFound");
       }
-      return res.status(CREATED_STATUS).send({ avatar: user.avatar });
+      return res.status(SUCCESS_STATUS).send({ avatar: user.avatar });
     })
     .catch((error) => {
       if (error.message === "NotFound") {
