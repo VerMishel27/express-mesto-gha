@@ -1,36 +1,37 @@
-//import User from "../models/User";
-const User = require("../models/User");
-const { BAD_REQUEST_STATUS,
+const User = require('../models/User');
+const {
+  BAD_REQUEST_STATUS,
   SERVER_ERROR_STATUS,
   NOT_FOUND_STATUS,
   CREATED_STATUS,
-  SUCCESS_STATUS} = require("../constants/errorStatus")
+  SUCCESS_STATUS,
+} = require('../constants/errorStatus');
 
 const getUsers = async (req, res) => {
   try {
     const user = await User.find({});
     return res.status(SUCCESS_STATUS).send(user);
   } catch (error) {
-    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
+    return res.status(SERVER_ERROR_STATUS).send({ message: 'Ошибка на стороне сервера' });
   }
 };
 
 const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId).orFail(new Error("NotFound"));
+    const user = await User.findById(userId).orFail(new Error('NotFound'));
 
     return res.status(SUCCESS_STATUS).send(user);
   } catch (error) {
-    if (error.message === "NotFound") {
+    if (error.message === 'NotFound') {
       return res
         .status(NOT_FOUND_STATUS)
-        .send({ message: "Пользователь с указанным _id не найден." });
+        .send({ message: 'Пользователь с указанным _id не найден.' });
     }
-    if (error.name === "CastError") {
-      return res.status(BAD_REQUEST_STATUS).send({ message: "передан не валидный id" });
+    if (error.name === 'CastError') {
+      return res.status(BAD_REQUEST_STATUS).send({ message: 'передан не валидный id' });
     }
-    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
+    return res.status(SERVER_ERROR_STATUS).send({ message: 'Ошибка на стороне сервера' });
   }
 };
 
@@ -39,14 +40,13 @@ const createUser = async (req, res) => {
     const newUser = await new User(req.body);
 
     return res.status(CREATED_STATUS).send(await newUser.save());
-
   } catch (error) {
-    if (error.name === "ValidationError") {
+    if (error.name === 'ValidationError') {
       return res.status(BAD_REQUEST_STATUS).send({
-        message: "Переданы некорректные данные при создании пользователя.",
+        message: 'Переданы некорректные данные при создании пользователя.',
       });
     }
-    return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
+    return res.status(SERVER_ERROR_STATUS).send({ message: 'Ошибка на стороне сервера' });
   }
 };
 
@@ -58,26 +58,26 @@ const updateInfoUser = async (req, res) => {
     {
       new: true, // обработчик then получит на вход обновлённую запись
       runValidators: true, // данные будут валидированы перед изменением
-    }
+    },
   )
     .then((user) => {
       if (!user) {
-        throw new Error("NotFound");
+        throw new Error('NotFound');
       }
       return res.status(SUCCESS_STATUS).send({ name: user.name, about: user.about });
     })
     .catch((error) => {
-      if (error.message === "NotFound") {
+      if (error.message === 'NotFound') {
         return res
           .status(NOT_FOUND_STATUS)
-          .send({ message: "Пользователь с указанным _id не найден." });
+          .send({ message: 'Пользователь с указанным _id не найден.' });
       }
-      if (error.name === "ValidationError") {
+      if (error.name === 'ValidationError') {
         return res.status(BAD_REQUEST_STATUS).send({
-          message: "Переданы некорректные данные при обновлении профиля.",
+          message: 'Переданы некорректные данные при обновлении профиля.',
         });
       }
-      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
@@ -90,26 +90,26 @@ const updateAvatarUser = async (req, res) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   )
     .then((user) => {
       if (!user) {
-        throw new Error("NotFound");
+        throw new Error('NotFound');
       }
       return res.status(SUCCESS_STATUS).send({ avatar: user.avatar });
     })
     .catch((error) => {
-      if (error.message === "NotFound") {
+      if (error.message === 'NotFound') {
         return res
           .status(NOT_FOUND_STATUS)
-          .send({ message: "Пользователь с указанным _id не найден." });
+          .send({ message: 'Пользователь с указанным _id не найден.' });
       }
-      if (error.name === "ValidationError") {
+      if (error.name === 'ValidationError') {
         return res.status(BAD_REQUEST_STATUS).send({
-          message: "Переданы некорректные данные при обновлении профиля.",
+          message: 'Переданы некорректные данные при обновлении профиля.',
         });
       }
-      return res.status(SERVER_ERROR_STATUS).send({ message: "Ошибка на стороне сервера" });
+      return res.status(SERVER_ERROR_STATUS).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 

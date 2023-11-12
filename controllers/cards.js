@@ -1,11 +1,11 @@
-const Card = require("../models/Card");
+const Card = require('../models/Card');
 const {
   BAD_REQUEST_STATUS,
   SERVER_ERROR_STATUS,
   NOT_FOUND_STATUS,
   CREATED_STATUS,
   SUCCESS_STATUS,
-} = require("../constants/errorStatus");
+} = require('../constants/errorStatus');
 
 const getCards = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ const getCards = async (req, res) => {
   } catch (error) {
     return res
       .status(SERVER_ERROR_STATUS)
-      .send({ message: "Ошибка на стороне сервера" });
+      .send({ message: 'Ошибка на стороне сервера' });
   }
 };
 
@@ -25,14 +25,14 @@ const postCard = async (req, res) => {
 
     return res.status(CREATED_STATUS).send(await newCard.save());
   } catch (error) {
-    if (error.name === "ValidationError") {
+    if (error.name === 'ValidationError') {
       return res.status(BAD_REQUEST_STATUS).send({
-        message: " Переданы некорректные данные при создании карточки.",
+        message: 'Переданы некорректные данные при создании карточки.',
       });
     }
     return res
       .status(SERVER_ERROR_STATUS)
-      .send({ message: "Ошибка на стороне сервера" });
+      .send({ message: 'Ошибка на стороне сервера' });
   }
 };
 
@@ -41,24 +41,24 @@ const deleteCard = async (req, res) => {
     const delCard = await Card.findByIdAndRemove(req.params.cardId);
 
     if (!delCard) {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     }
 
     return res.status(SUCCESS_STATUS).send(delCard);
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error.name === 'CastError') {
       return res
         .status(BAD_REQUEST_STATUS)
-        .send({ message: "Передан неправильный _id." });
+        .send({ message: 'Передан неправильный _id.' });
     }
-    if (error.message === "NotFound") {
+    if (error.message === 'NotFound') {
       return res
         .status(NOT_FOUND_STATUS)
-        .send({ message: "Карточка с указанным _id не найдена." });
+        .send({ message: 'Карточка с указанным _id не найдена.' });
     }
     return res
       .status(SERVER_ERROR_STATUS)
-      .send({ message: "Ошибка на стороне сервера" });
+      .send({ message: 'Ошибка на стороне сервера' });
   }
 };
 
@@ -66,30 +66,30 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true }
+    { new: true },
   )
     .then((like) => {
       if (!like) {
-        throw new Error("NotFound");
+        throw new Error('NotFound');
       }
 
       return res.status(CREATED_STATUS).send(like);
     })
     .catch((error) => {
-      if (error.name === "CastError") {
+      if (error.name === 'CastError') {
         return res
           .status(BAD_REQUEST_STATUS)
-          .send({ message: "Передан некорректный _id карточки." });
+          .send({ message: 'Передан некорректный _id карточки.' });
       }
-      if (error.message === "NotFound") {
+      if (error.message === 'NotFound') {
         return res
           .status(NOT_FOUND_STATUS)
-          .send({ message: "Передан несуществующий _id карточки." });
+          .send({ message: 'Передан несуществующий _id карточки.' });
       }
 
       return res
         .status(SERVER_ERROR_STATUS)
-        .send({ message: "Ошибка на стороне сервера" });
+        .send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
@@ -97,30 +97,30 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true }
+    { new: true },
   )
     .then((like) => {
       if (!like) {
-        throw new Error("NotFound");
+        throw new Error('NotFound');
       }
 
       return res.status(SUCCESS_STATUS).send(like);
     })
     .catch((error) => {
-      if (error.name === "CastError") {
+      if (error.name === 'CastError') {
         return res
           .status(BAD_REQUEST_STATUS)
-          .send({ message: "Передан некорректный _id карточки." });
+          .send({ message: 'Передан некорректный _id карточки.' });
       }
-      if (error.message === "NotFound") {
+      if (error.message === 'NotFound') {
         return res
           .status(NOT_FOUND_STATUS)
-          .send({ message: "Передан несуществующий _id карточки." });
+          .send({ message: 'Передан несуществующий _id карточки.' });
       }
 
       return res
         .status(SERVER_ERROR_STATUS)
-        .send({ message: "Ошибка на стороне сервера" });
+        .send({ message: 'Ошибка на стороне сервера' });
     });
 };
 

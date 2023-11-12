@@ -10,4 +10,4 @@ module.exports = {
   NOT_FOUND_STATUS,
   CREATED_STATUS,
   SUCCESS_STATUS,
-}
+};

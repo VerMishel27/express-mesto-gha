@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose } = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
@@ -6,29 +6,29 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: {
         value: true,
-        message: "Поле name является обязательным",
+        message: 'Поле name является обязательным',
       },
-      minlength: [2, "Минимальная длинна 2 символа"],
-      maxlength: [30, "Максимальная длинна 30 символов"],
+      minlength: [2, 'Минимальная длинна 2 символа'],
+      maxlength: [30, 'Максимальная длинна 30 символов'],
     },
     about: {
       type: String,
       required: {
         value: true,
-        message: "Поле about является обязательным",
+        message: 'Поле about является обязательным',
       },
-      minlength: [2, "Минимальная длинна 2 символа"],
-      maxlength: [30, "Максимальная длинна 30 символов"],
+      minlength: [2, 'Минимальная длинна 2 символа'],
+      maxlength: [30, 'Максимальная длинна 30 символов'],
     },
     avatar: {
       type: String,
       required: {
         value: true,
-        message: "Поле avatar является обязательным",
+        message: 'Поле avatar является обязательным',
       },
     },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false, timestamps: true },
 );
 
-module.exports = mongoose.model("user", userSchema);
+module.exports = mongoose.model('user', userSchema);

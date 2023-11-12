@@ -3,12 +3,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const router = require('./routes');
+
 const app = express();
+
 const {
   NOT_FOUND_STATUS,
 } = require('./constants/errorStatus');
 
 const { PORT = 3000 } = process.env;
+
 app.use((req, res, next) => {
   req.user = {
     _id: '654cb3791cb20f9fce3840a4', // вставьте сюда _id созданного в предыдущем пункте пользователя
