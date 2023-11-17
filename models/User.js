@@ -1,31 +1,58 @@
 const { default: mongoose } = require('mongoose');
+const { default: isEmail } = require('validator/lib/isEmail');
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    email: {
       type: String,
       required: {
         value: true,
-        message: 'Поле name является обязательным',
+        message: 'Поле email является обязательным',
       },
+      validate: {
+        validator: function (v) {
+          return isEmail(v);
+        },
+        message: (props) => `${props.value} is not a valid email!`,
+      },
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: {
+        value: true,
+        message: 'Поле password является обязательным',
+      },
+      minlength: 8,
+      select: false,
+    },
+    name: {
+      type: String,
+      default: 'Жак-Ив Кусто',
+      // required: {
+      //   value: true,
+      //   message: 'Поле name является обязательным',
+      // },
       minlength: [2, 'Минимальная длинна 2 символа'],
       maxlength: [30, 'Максимальная длинна 30 символов'],
     },
     about: {
       type: String,
-      required: {
-        value: true,
-        message: 'Поле about является обязательным',
-      },
+      default: 'Исследователь',
+      // required: {
+      //   value: true,
+      //   message: 'Поле about является обязательным',
+      // },
       minlength: [2, 'Минимальная длинна 2 символа'],
       maxlength: [30, 'Максимальная длинна 30 символов'],
     },
     avatar: {
       type: String,
-      required: {
-        value: true,
-        message: 'Поле avatar является обязательным',
-      },
+      default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      // required: {
+      //   value: true,
+      //   message: 'Поле avatar является обязательным',
+      // },
     },
   },
   { versionKey: false, timestamps: true },

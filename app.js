@@ -1,24 +1,23 @@
 const express = require('express');
 
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 
 const router = require('./routes');
 
 const app = express();
 
+const { loginUser, createUser } = require('./controllers/users');
+const { authenticateValidator } = require('./middlewares/customValidator');
 const {
+  BAD_REQUEST_STATUS,
+  SERVER_ERROR_STATUS,
   NOT_FOUND_STATUS,
+  CREATED_STATUS,
+  SUCCESS_STATUS,
 } = require('./constants/errorStatus');
 
 const { PORT = 3000 } = process.env;
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: '654cb3791cb20f9fce3840a4', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
-
-  next();
-});
 
 app.use(express.json());
 
@@ -29,8 +28,23 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use(router);
 
+app.post('/signin', authenticateValidator, loginUser);
+app.post('/signup', authenticateValidator, createUser);
+
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  res.status(err.statusCode).send({ message: err.message });
+  next();
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).send({ message: 'На сервере произошла ошибка' });
+  next();
+});
+
 app.use((req, res) => {
-  res.status(NOT_FOUND_STATUS).send({ message: 'Страница не найдена' });
+  return res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => {
