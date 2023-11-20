@@ -28,15 +28,15 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   res.status(err.statusCode).send({ message: err.message });
+  next();
 });
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
-});
-
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   res.status(500).send({ message: 'На сервере произошла ошибка' });
+  next();
 });
+
+app.use((req, res) => res.status(404).send({ message: 'Страница не найдена' }));
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
