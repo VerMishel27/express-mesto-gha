@@ -8,14 +8,7 @@ const router = require('./routes');
 const app = express();
 
 const { loginUser, createUser } = require('./controllers/users');
-const { authenticateValidator } = require('./middlewares/customValidator');
-const {
-  BAD_REQUEST_STATUS,
-  SERVER_ERROR_STATUS,
-  NOT_FOUND_STATUS,
-  CREATED_STATUS,
-  SUCCESS_STATUS,
-} = require('./constants/errorStatus');
+const { authenticateValidator, createValidator } = require('./middlewares/customValidator');
 
 const { PORT = 3000 } = process.env;
 
@@ -29,7 +22,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 app.use(router);
 
 app.post('/signin', authenticateValidator, loginUser);
-app.post('/signup', authenticateValidator, createUser);
+app.post('/signup', createValidator, createUser);
 
 app.use(errors());
 
@@ -44,7 +37,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res) => {
-  return res.status(404).send({ message: 'Страница не найдена' });
+  res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => {

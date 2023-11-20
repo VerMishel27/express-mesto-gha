@@ -10,9 +10,7 @@ const userSchema = new mongoose.Schema(
         message: 'Поле email является обязательным',
       },
       validate: {
-        validator: function (v) {
-          return isEmail(v);
-        },
+        validator: (v) => isEmail(v),
         message: (props) => `${props.value} is not a valid email!`,
       },
       unique: true,

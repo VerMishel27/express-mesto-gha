@@ -1,20 +1,15 @@
-const { NotFoundError, BadRequest } = require('../middlewares/handlingError');
+const { NotFoundError } = require('../middlewares/notFoundError');
+const { BadRequest } = require('../middlewares/badRequest');
 
 const Card = require('../models/Card');
-const {
-  BAD_REQUEST_STATUS,
-  SERVER_ERROR_STATUS,
-  NOT_FOUND_STATUS,
-  CREATED_STATUS,
-  SUCCESS_STATUS,
-} = require('../constants/errorStatus');
 
 const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
+
     return res.status(200).send(cards);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -26,33 +21,33 @@ const postCard = async (req, res, next) => {
     return res.status(201).send(await newCard.save());
   } catch (error) {
     if (error.name === 'ValidationError') {
-      next(new BadRequest('Переданы некорректные данные при создании карточки.'));
+      return next(new BadRequest('Переданы некорректные данные при создании карточки.'));
     }
-    next(error);
+    return next(error);
   }
 };
 
 const deleteCard = async (req, res, next) => {
   try {
-    const _id = req.user._id;
-    const delCard = await Card.findByIdAndRemove(req.params.cardId);
+    const { _id } = req.user;
+    const card = await Card.findById(req.params.cardId);
 
-    if (!delCard) {
+    if (!card) {
       throw new NotFoundError('Карточка с указанным _id не найдена.');
     }
 
-    if (_id === delCard.owner) {
-      return res.status(200).send(delCard);
-    } else {
-      throw new BadRequest('Можно удалять только свою карточку!')
+    if (_id !== card.owner) {
+      throw new BadRequest('Можно удалять только свою карточку!');
     }
-  } catch (error) {
-        if (error.name === 'CastError') {
-          next(new BadRequest('Передан неправильный _id.'));
-        }
-    next(error);
-  }
 
+    const delCard = await Card.findByIdAndRemove(req.params.cardId);
+    return res.status(200).send(delCard);
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return next(new BadRequest('Передан неправильный _id.'));
+    }
+    return next(error);
+  }
 };
 
 const likeCard = (req, res, next) => {
@@ -70,9 +65,9 @@ const likeCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequest('Передан некорректный _id карточки.'));
-      };
-      next(error);
+        return next(new BadRequest('Передан некорректный _id карточки.'));
+      }
+      return next(error);
     });
 };
 
@@ -91,9 +86,9 @@ const dislikeCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequest('Передан некорректный _id карточки.'));
-      };
-      next(error);
+        return next(new BadRequest('Передан некорректный _id карточки.'));
+      }
+      return next(error);
     });
 };
 

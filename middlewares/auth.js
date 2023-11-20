@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { NotAutanticate } = require('./handlingError');
+const { NotAutanticate } = require('./notAutanticate');
 
 const auth = (req, res, next) => {
   let payload;
@@ -12,7 +12,6 @@ const auth = (req, res, next) => {
 
     const validTocken = token.replace('Bearer ', '');
     payload = jwt.verify(validTocken, 'dev_secret');
-
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
       next(new NotAutanticate('С токеном что-то не так!'));

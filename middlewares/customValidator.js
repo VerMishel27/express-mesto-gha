@@ -1,6 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 
-const regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+const regex = /^(https?:\/\/)?([\da-zA-Z.\-?]+).([a-z.]{2,6})([/\w.-]*)*\/?$/;
 
 const avatarValidator = celebrate({
   body: Joi.object().keys({
@@ -17,7 +17,7 @@ const usersValidator = celebrate({
 const postCardValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().pattern(new RegExp(regex))
+    link: Joi.string().pattern(new RegExp(regex)),
   }),
 });
 
@@ -34,10 +34,21 @@ const authenticateValidator = celebrate({
   }),
 });
 
+const createValidator = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(new RegExp(regex)),
+  }),
+});
+
 module.exports = {
   avatarValidator,
   usersValidator,
   postCardValidator,
   cardIdValidator,
   authenticateValidator,
-}
+  createValidator,
+};
