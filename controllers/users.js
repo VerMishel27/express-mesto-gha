@@ -47,7 +47,8 @@ const createUser = async (req, res, next) => {
 
     return res.status(201).send({
       email: newUser.email,
-     // _id: newUser._id,
+      // _id: newUser._id,
+      password: newUser.password,
       name: newUser.name,
       about: newUser.about,
       avatar: newUser.avatar,
@@ -118,7 +119,7 @@ const loginUser = async (req, res, next) => {
   try {
     const userAdmin = await User.findOne({ email })
       .select('+password')
-      .orFail(() => new Error('NotFound'));
+      .orFail(() => next(new NotAutanticate('Пользователь не найден!')));
 
     const matched = await bcrypt.compare(String(password), userAdmin.password);
 
