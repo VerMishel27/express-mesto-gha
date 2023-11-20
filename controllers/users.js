@@ -47,10 +47,10 @@ const createUser = async (req, res, next) => {
 
     return res.status(201).send({
       email: newUser.email,
-      _id: newUser._id,
-      // name: newUser.name,
-      // about: newUser.about,
-      // avatar: newUser.avatar,
+     // _id: newUser._id,
+      name: newUser.name,
+      about: newUser.about,
+      avatar: newUser.avatar,
     });
   } catch (error) {
     if (error.code === MONGO_DUPLCATE_ERROR_CODE) {
