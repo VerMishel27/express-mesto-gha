@@ -127,7 +127,7 @@ const loginUser = async (req, res, next) => {
       throw new NotAutanticate('Не правильные email или пароль!');
     }
 
-    const token = generateToken({ _id: userAdmin._id, email: userAdmin.email });
+    const token = generateToken({ _id: userAdmin._id, email: userAdmin.email }, 'dev_secret');
 
     return res.status(200).send({ token, email: userAdmin.email });
   } catch (error) {
