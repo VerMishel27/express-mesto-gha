@@ -22,13 +22,7 @@ const getUserById = async (req, res, next) => {
     const { userId } = req.params;
     const user = await User.findById(userId).orFail(new Error('NotFound'));
 
-    return res.status(200).send({
-      _id: user._id,
-      name: user.name,
-      about: user.about,
-      email: user.email,
-      avatar: user.avatar,
-    });
+    return res.status(200).send(user);
   } catch (error) {
     if (error.message === 'NotFound') {
       return next(new FoundError('Пользователь с указанным _id не найден.', 404));
@@ -50,9 +44,10 @@ const createUser = async (req, res, next) => {
 
     return res.status(201).send({
       email: newUser.email,
-      name: newUser.name,
-      about: newUser.about,
-      avatar: newUser.avatar,
+      _id: newUser._id,
+      // name: newUser.name,
+      // about: newUser.about,
+      // avatar: newUser.avatar,
     });
   } catch (error) {
     if (error.code === MONGO_DUPLCATE_ERROR_CODE) {
