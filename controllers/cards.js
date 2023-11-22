@@ -38,7 +38,7 @@ const deleteCard = async (req, res, next) => {
       return next(new FoundError('Можно удалять только свою карточку!', 403));
     }
 
-    const delCard = await Card.findByIdAndRemove(req.params.cardId);
+    const delCard = await Card.deleteOne(card);
     return res.status(200).send(delCard);
   } catch (error) {
     if (error.name === 'CastError') {
@@ -59,7 +59,7 @@ const likeCard = (req, res, next) => {
         throw new FoundError('Передан несуществующий _id карточки.', 404);
       }
 
-      return res.status(201).send(like);
+      return res.status(200).send(like);
     })
     .catch((error) => {
       if (error.name === 'CastError') {

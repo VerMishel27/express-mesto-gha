@@ -9,6 +9,7 @@ const app = express();
 
 const { loginUser, createUser } = require('./controllers/users');
 const { authenticateValidator, createValidator } = require('./middlewares/customValidator');
+const { FoundError } = require('./middlewares/foundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -26,17 +27,22 @@ app.post('/signup', createValidator, createUser);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-  next();
+app.use(() => {
+  throw new FoundError('Страница не найдена', 404);
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).send({ message: 'На сервере произошла ошибка' });
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
   next();
 });
-
-app.use((req, res) => res.status(404).send({ message: 'Страница не найдена' }));
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает

@@ -21,26 +21,17 @@ const userSchema = new mongoose.Schema(
         value: true,
         message: 'Поле password является обязательным',
       },
-      minlength: 8,
       select: false,
     },
     name: {
       type: String,
       default: 'Жак-Ив Кусто',
-      // required: {
-      //   value: true,
-      //   message: 'Поле name является обязательным',
-      // },
       minlength: [2, 'Минимальная длинна 2 символа'],
       maxlength: [30, 'Максимальная длинна 30 символов'],
     },
     about: {
       type: String,
       default: 'Исследователь',
-      // required: {
-      //   value: true,
-      //   message: 'Поле about является обязательным',
-      // },
       minlength: [2, 'Минимальная длинна 2 символа'],
       maxlength: [30, 'Максимальная длинна 30 символов'],
     },
