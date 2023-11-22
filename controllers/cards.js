@@ -31,11 +31,11 @@ const deleteCard = async (req, res, next) => {
     const card = await Card.findById(req.params.cardId);
 
     if (!card) {
-      throw new FoundError('Карточка с указанным _id не найдена.', 404);
+      return next(new FoundError('Карточка с указанным _id не найдена.', 404));
     }
 
     if (_id !== String(card.owner)) {
-      throw new FoundError('Можно удалять только свою карточку!', 403);
+      return next(new FoundError('Можно удалять только свою карточку!', 403));
     }
 
     const delCard = await Card.findByIdAndRemove(req.params.cardId);

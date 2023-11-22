@@ -36,18 +36,30 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password,
+      name,
+      about,
+      avatar,
+    } = req.body;
 
     const hash = await bcrypt.hash(password, SOLT_ROUNDS);
 
-    const newUser = await User.create({ email, password: hash });
+    const newUser = await User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    });
 
     return res.status(201).send({
-      email: newUser.email,
       _id: newUser._id,
-      // name: newUser.name,
-      // about: newUser.about,
-      // avatar: newUser.avatar,
+      email: newUser.email,
+      name: newUser.name,
+      about: newUser.about,
+      avatar: newUser.avatar,
     });
   } catch (error) {
     if (error.code === MONGO_DUPLCATE_ERROR_CODE) {
