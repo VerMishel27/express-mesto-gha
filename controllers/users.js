@@ -4,10 +4,7 @@ const User = require('../models/User');
 const { generateToken } = require('../utils/jwt');
 
 const { MONGO_DUPLCATE_ERROR_CODE } = require('../constants/errorStatus');
-const { NotFoundError } = require('../middlewares/notFoundError');
-const { BadRequest } = require('../middlewares/badRequest');
-const { MONGO_DUPLCATE_ERROR } = require('../middlewares/mongoDuplcateError');
-const { NotAutanticate } = require('../middlewares/notAutanticate');
+const { FoundError } = require('../middlewares/foundError');
 
 const SOLT_ROUNDS = 10;
 
@@ -28,10 +25,10 @@ const getUserById = async (req, res, next) => {
     return res.status(200).send(user);
   } catch (error) {
     if (error.message === 'NotFound') {
-      return next(new NotFoundError('Пользователь с указанным _id не найден.'));
+      return next(new FoundError('Пользователь с указанным _id не найден.', 404));
     }
     if (error.name === 'CastError') {
-      return next(new BadRequest('Передан не валидный id'));
+      return next(new FoundError('Передан не валидный id', 400));
     }
     return next(error);
   }
@@ -47,18 +44,17 @@ const createUser = async (req, res, next) => {
 
     return res.status(201).send({
       email: newUser.email,
-      // _id: newUser._id,
-      password: newUser.password,
+      _id: newUser._id,
       name: newUser.name,
       about: newUser.about,
       avatar: newUser.avatar,
     });
   } catch (error) {
     if (error.code === MONGO_DUPLCATE_ERROR_CODE) {
-      return next(new MONGO_DUPLCATE_ERROR('Пользователь с таким email уже существует!'));
+      return next(new FoundError('Пользователь с таким email уже существует!', 409));
     }
     if (error.name === 'ValidationError') {
-      return next(new BadRequest('Переданы некорректные данные при создании пользователя.'));
+      return next(new FoundError('Переданы некорректные данные при создании пользователя.', 400));
     }
     return next(error);
   }
@@ -76,13 +72,13 @@ const updateInfoUser = async (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        throw new FoundError('Пользователь с указанным _id не найден.', 404);
       }
       return res.status(200).send({ name: user.name, about: user.about });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные при обновлении профиля.'));
+        next(new FoundError('Переданы некорректные данные при обновлении профиля.', 400));
       }
       return next(error);
     });
@@ -101,13 +97,13 @@ const updateAvatarUser = async (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        throw new FoundError('Пользователь с указанным _id не найден.', 404);
       }
       return res.status(200).send({ avatar: user.avatar });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return next(new BadRequest('Переданы некорректные данные при обновлении профиля.'));
+        return next(new FoundError('Переданы некорректные данные при обновлении профиля.', 400));
       }
       return next(error);
     });
@@ -119,12 +115,12 @@ const loginUser = async (req, res, next) => {
   try {
     const userAdmin = await User.findOne({ email })
       .select('+password')
-      .orFail(() => next(new NotAutanticate('Пользователь не найден!')));
+      .orFail(() => next(new FoundError('Пользователь не найден!', 401)));
 
     const matched = await bcrypt.compare(String(password), userAdmin.password);
 
     if (!matched) {
-      throw new NotAutanticate('Не правильные email или пароль!');
+      throw new FoundError('Не правильные email или пароль!', 401);
     }
 
     const token = generateToken({ _id: userAdmin._id, email: userAdmin.email }, 'dev_secret');
@@ -132,7 +128,7 @@ const loginUser = async (req, res, next) => {
     return res.status(200).send({ token, email: userAdmin.email });
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return next(new BadRequest('Переданы некорректные данные при создании пользователя.'));
+      return next(new FoundError('Переданы некорректные данные при создании пользователя.', 400));
     }
     return next(error);
   }
@@ -143,7 +139,7 @@ const getUsersMe = async (req, res, next) => {
     const { _id } = req.user;
 
     if (!_id) {
-      throw new NotFoundError('Пользователь с указанным _id не найден.');
+      throw new FoundError('Пользователь с указанным _id не найден.', 404);
     }
 
     const user = await User.findById(_id);
@@ -159,7 +155,7 @@ const getUsersMe = async (req, res, next) => {
       });
   } catch (error) {
     if (error.name === 'CastError') {
-      return next(new BadRequest('Передан не валидный id'));
+      return next(new FoundError('Передан не валидный id', 400));
     }
     return next(error);
   }
