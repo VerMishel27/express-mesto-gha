@@ -9,6 +9,7 @@ const app = express();
 
 const { FoundError } = require('./middlewares/foundError');
 const { errorHandler } = require('./middlewares/error-handler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
@@ -19,7 +20,11 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(requestLogger);
+
 app.use(router);
+
+app.use(errorLogger);
 
 app.use(errors());
 
